@@ -245,9 +245,8 @@ cl <- makeCluster(10) #8-10
 registerDoParallel(cl)
 
 # with variable weighting: (~5-10 min)
-AOA <- aoa(preddf, model = mod, returnTrainDI = TRUE, cl = cl)
+AOA <- aoa(preddf, model = mod, cl = cl) # previously with argument returnTrainDI
 # AOA$AOA %>% table
-# attributes(AOA)$aoa_stats
 
 saveRDS(AOA, here("derived", "06-2-AOA_object.rds"))
 
@@ -532,7 +531,7 @@ registerDoParallel(cl)
 
 foreach(ii = 1:100, .packages = c("caret")) %dopar% {
   
-  source(here::here("code/glc_functions.R"))
+  source(here::here("code/functions.R"))
   make_pred_2013()
 
 }

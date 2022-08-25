@@ -7,14 +7,57 @@
 
 # ************* tmst.R *************
 # create timestamp
+# taken from package gpatoine/gptools
 
+#' Timestamp
+#'
+#' Squishes, especially useful for file names
+#'
+#' @param ext character extension
+#' @param time logical Should time (HMS) also be included?
+#' @param prefix character to be added before, defaults to "_c"
+#'
+#' @return character squished timestamp
+#' @export
 tmst <- function(ext = NULL, time = T, prefix = "_c") {
+  
+  if (!is.null(ext)) {
+    
+    if(!stringi::stri_sub(ext,1,1) == ".") {
+      ext <- paste0(".", ext)
+    }
+    
+  }
   
   if (time) {
     paste0(prefix, format(Sys.time(), "%Y-%m-%d_%H%M%S"), ext)
   } else {
     paste0(prefix, format(Sys.time(), "%Y-%m-%d"), ext)
   }
+}
+
+#' Last timestamped
+#'
+#' Read last timestamped (RDS) file
+#' Default is to load file, but can return only name
+#'
+#' @param fold folder path
+#' @param pattern regex pattern passed to list.files
+#' @param load logical wanna load to file or just get it's name. use FALSE if the file is not rds format
+#' @param prev int previous version before last
+#'
+#' @return R object read from RDS file
+#' @export
+last_tmst <- function(fold, pattern = "", load = TRUE, prev = 0) {
+  files <- list.files(fold, pattern = pattern, full.names = TRUE)
+  file <- files %>% sort(TRUE) %>% .[1 + prev]
+  
+  if (load & tools::file_ext(file) == "rds") {
+    message("Reading ", basename(file))
+    readRDS(file)
+    
+  }  else file
+  
 }
 
 
